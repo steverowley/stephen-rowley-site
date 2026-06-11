@@ -218,9 +218,18 @@
   .contact-card button{background:var(--accent);color:#fff}
   .contact-card button:hover{background:#f08a64}
   .contact-card button:disabled{opacity:0.6;cursor:wait}
-  .form-success{padding:24px 0;color:#b9ae9f;font-size:16px;line-height:1.65}
-  .form-success strong{display:block;color:#f6f0e6;font-size:20px;margin-bottom:8px}
-  .form-success .tick{color:#e0664a;font-size:26px;display:block;margin-bottom:10px}
+  .form-success{padding:8px 0;color:#b9ae9f;font-size:16px;line-height:1.65}
+  .form-success>*{animation:rise .5s ease both}
+  .form-success .tick-badge{width:46px;height:46px;border-radius:50%;background:rgba(224,102,74,0.18);color:#f09c78;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .form-success .tick-badge svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .form-success>strong{display:block;color:#f6f0e6;font-size:21px;letter-spacing:-0.01em;line-height:1.3;margin-bottom:8px;animation-delay:.08s}
+  .form-success .hello{animation-delay:.16s}
+  .form-success .next{list-style:none;margin-top:22px;display:grid;gap:14px;animation-delay:.24s}
+  .form-success .next li{display:flex;gap:14px;align-items:baseline;font-size:15px}
+  .form-success .next li b{color:#f09c78;font-weight:800;font-size:13px;letter-spacing:0.04em}
+  .form-success .next li strong{color:#f6f0e6;font-weight:650}
+  .form-success .ps{margin-top:22px;padding-top:18px;border-top:1px solid rgba(244,160,124,0.16);font-size:14px;color:#9b9183;animation-delay:.32s}
+  @media(prefers-reduced-motion:reduce){.form-success>*{animation:none}}
   .form-error{margin-top:10px;color:#f4a07c;font-size:14px;display:none}
   [data-theme="dark"] .contact-card{background:#272019;border-color:#3d342a;box-shadow:0 18px 50px rgba(0,0,0,0.4)}
   [data-theme="dark"] .contact-card::before{background:radial-gradient(circle,rgba(236,122,82,0.24),transparent 65%)}
@@ -618,7 +627,19 @@
       if(res.ok){
         /* Cookie this browser so Klaviyo onsite tracking ties future visits to this profile */
         if(window.klaviyo){window.klaviyo.identify({email:email,first_name:firstName,last_name:lastName});}
-        form.innerHTML='<div class="form-success"><span class="tick">✓</span><strong>Audit request received</strong>Thanks '+(firstName||'')+'. Check your inbox: I\'ll reply with simple access instructions, and we\'ll have your findings call within 5 business days of access.</div>';
+        var safeName=firstName.replace(/[<>&"]/g,'');
+        form.innerHTML='<div class="form-success" role="status">'
+          +'<span class="tick-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>'
+          +'<strong>Got it'+(safeName?', '+safeName:'')+'. Over to me.</strong>'
+          +'<p class="hello">Your audit request is in. Here\'s exactly what happens next:</p>'
+          +'<ol class="next">'
+          +'<li><b>01</b><span><strong>Check your inbox.</strong> I\'ll reply with simple access instructions; adding me takes about 2 minutes.</span></li>'
+          +'<li><b>02</b><span><strong>I get to work.</strong> Deliverability, list health, segmentation, flow gaps: the full sweep of your account.</span></li>'
+          +'<li><b>03</b><span><strong>We talk findings.</strong> A short 30-minute call within 5 business days of access: what\'s leaking, what it\'s worth, and what to fix first.</span></li>'
+          +'</ol>'
+          +'<p class="ps">No autoresponders, no drip sequence. The next email in your inbox is me, personally.</p>'
+          +'</div>';
+        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){fireConfetti(true);}
       }else{throw new Error('status '+res.status);}
     }).catch(function(){
       sendBtn.disabled=false;
@@ -681,10 +702,10 @@
     });
   });
 
-  /* Confetti pop at the bottom of the page (once per visit) */
+  /* Confetti pop at the bottom of the page (once per visit) and on form success */
   var confettiFired=false;
-  function fireConfetti(){
-    if(confettiFired) return;
+  function fireConfetti(force){
+    if(confettiFired&&!force) return;
     confettiFired=true;
     var foot=document.querySelector('footer');
     if(foot){foot.style.animation='footpop .5s ease';}
