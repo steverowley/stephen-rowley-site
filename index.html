@@ -221,6 +221,7 @@
   .contact-card form{margin-top:0;max-width:none}
   .contact-card label{color:#d8cfc2}
   .contact-card label span{color:#9b9183}
+  .contact-card .consent{color:#b9ae9f}
   .contact-card button{background:var(--accent);color:#fff}
   .contact-card button:hover{background:#f08a64}
   .contact-card button:disabled{opacity:0.6;cursor:wait}
@@ -245,6 +246,8 @@
   label span{color:var(--muted);font-weight:400}
   input,textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font:inherit;font-size:15.5px;background:#fffdf8;margin-top:6px;box-shadow:0 1px 4px rgba(26,22,17,0.03)}
   input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transparent}
+  .consent{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:13.5px;line-height:1.5;cursor:pointer}
+  .consent input{width:16px;height:16px;flex:none;margin-top:2px;box-shadow:none;accent-color:var(--accent)}
   button{background:var(--ink);color:#fff;border:0;padding:15px 30px;border-radius:99px;font-weight:700;font-size:16px;cursor:pointer;justify-self:start;transition:background .15s}
   button:hover{background:var(--accent-deep)}
   footer{padding:34px 0 56px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
@@ -578,6 +581,7 @@
           <div><label for="email">Email</label><input id="email" type="email" name="email" required></div>
           <div><label for="store">Store URL <span>(so I can see what you're selling)</span></label><input id="store" type="url" name="store" placeholder="https://" required></div>
           <div><label for="message">What's your biggest email frustration right now?</label><textarea id="message" name="message" rows="4" placeholder="e.g. We send campaigns but flows are basically empty. Email is maybe 8% of revenue." required></textarea></div>
+          <div><label class="consent" for="consent"><input id="consent" type="checkbox" name="consent" required><span>I consent to my details being stored and used to contact me about my audit request. Unsubscribe anytime.</span></label></div>
           <button type="submit">Request my free audit</button>
           <div class="form-error" id="formError">Something went wrong sending that. Please try again in a moment.</div>
         </form>
@@ -655,7 +659,8 @@
                 properties:{
                   store_url:form.querySelector('#store').value,
                   email_frustration:form.querySelector('#message').value,
-                  lead_source:'Website audit form'
+                  lead_source:'Website audit form',
+                  gdpr_consent:true
                 }
               }
             }
