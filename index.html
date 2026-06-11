@@ -72,10 +72,11 @@
   .wrap{max-width:880px;margin:0 auto;padding:0 24px}
   header{padding:18px 0;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;background:rgba(248,242,231,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
   [data-theme="dark"] header{background:rgba(20,17,16,0.88)}
-  header .wrap{display:flex;justify-content:space-between;align-items:center}
+  header .wrap{display:flex;align-items:center}
   .logo{font-weight:800;letter-spacing:-0.02em;display:flex;align-items:center}
   .logo-mark{height:19px;width:auto;display:block;color:var(--ink);overflow:visible}
   .logo-mark .dot{fill:var(--accent)}
+  nav{margin-left:auto}
   nav a{color:var(--muted);text-decoration:none;margin-left:22px;font-size:15px}
   nav a:hover{color:var(--ink)}
   nav a.navcta{background:var(--ink);color:#fff;padding:9px 18px;border-radius:99px;font-weight:600;font-size:14px}
@@ -248,21 +249,14 @@
   button:hover{background:var(--accent-deep)}
   footer{padding:34px 0 56px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
   @media(max-width:600px){.hero{padding-top:60px;padding-bottom:48px}}
-  /* Mobile header: logo on its own row, nav links spread full-width below */
+  /* Mobile header: nav collapses into a burger-toggled dropdown */
   @media(max-width:700px){
-    header{padding:12px 0}
-    header .wrap{flex-wrap:wrap;row-gap:10px}
-    nav{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px}
-    nav a{margin-left:0;font-size:14px;white-space:nowrap}
-    nav a.navcta{padding:8px 16px;font-size:13.5px}
-    .theme-toggle{margin-left:0;width:32px;height:32px;flex-shrink:0}
-    section{scroll-margin-top:108px}
-    #form{scroll-margin-top:120px}
-  }
-  @media(max-width:360px){
-    nav a{font-size:13.5px}
-    nav a.navcta{padding:8px 13px;font-size:13px}
-    .theme-toggle{width:30px;height:30px}
+    header{padding:14px 0}
+    nav{position:absolute;top:100%;left:0;right:0;margin-left:0;display:none;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--line);padding:4px 24px 18px;box-shadow:0 18px 34px rgba(26,22,17,0.10)}
+    nav.open{display:flex}
+    nav a{margin-left:0;color:var(--ink);font-weight:600;font-size:16px;padding:14px 2px;border-top:1px solid var(--line)}
+    nav a:first-child{border-top:0}
+    nav a.navcta{margin-top:12px;border-top:0;text-align:center;padding:12px 18px;font-size:15px}
   }
 
   /* 2026 pass: depth, motion, dark mode, accessibility */
@@ -316,6 +310,14 @@
   .theme-toggle:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--ink);transform:rotate(15deg)}
   [data-theme="dark"] .theme-toggle{background:transparent;color:#f4a07c;border-color:#3a332d}
   [data-theme="dark"] .theme-toggle:hover{background:#34211a;border-color:var(--accent)}
+  .nav-toggle{display:none;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:50%;width:36px;height:36px;padding:0;margin-left:10px;font-size:16px;line-height:1;cursor:pointer;transition:border-color .15s,background .15s}
+  .nav-toggle:hover{background:var(--accent-soft);border-color:var(--accent)}
+  [data-theme="dark"] .nav-toggle{color:#f4a07c;border-color:#3a332d}
+  [data-theme="dark"] .nav-toggle:hover{background:#34211a;border-color:var(--accent)}
+  @media(max-width:700px){
+    .theme-toggle{margin-left:auto}
+    .nav-toggle{display:inline-flex;align-items:center;justify-content:center}
+  }
 
   /* ---- Scroll progress bar ---- */
   .progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:99;transition:none}
@@ -360,13 +362,14 @@
         <text x="0" y="26" font-size="28" font-weight="800" letter-spacing="-0.5" fill="currentColor">Stephen Rowley<tspan class="dot">.</tspan></text>
       </svg>
     </div>
-    <nav aria-label="Main">
+    <nav aria-label="Main" id="siteNav">
       <a href="#services">Services</a>
       <a href="#about">About</a>
       <a href="#faq">FAQ</a>
       <a class="navcta" href="#contact">Free audit</a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Switch between light and dark mode" title="Switch theme">&#9789;</button>
     </nav>
+    <button class="theme-toggle" id="themeToggle" aria-label="Switch between light and dark mode" title="Switch theme">&#9789;</button>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">&#9776;</button>
   </div>
 </header>
 
@@ -604,6 +607,29 @@
     apply(theme);
     try{localStorage.setItem('theme',theme);}catch(e){}
   });}
+
+  /* Mobile burger menu */
+  var navBtn=document.getElementById('navToggle');
+  var siteNav=document.getElementById('siteNav');
+  if(navBtn&&siteNav){
+    var closeNav=function(){
+      if(!siteNav.classList.contains('open'))return;
+      siteNav.classList.remove('open');
+      navBtn.setAttribute('aria-expanded','false');
+      navBtn.setAttribute('aria-label','Open menu');
+      navBtn.innerHTML='&#9776;';
+    };
+    navBtn.addEventListener('click',function(){
+      if(siteNav.classList.contains('open')){closeNav();return;}
+      siteNav.classList.add('open');
+      navBtn.setAttribute('aria-expanded','true');
+      navBtn.setAttribute('aria-label','Close menu');
+      navBtn.innerHTML='&#10005;';
+    });
+    siteNav.addEventListener('click',function(e){if(e.target.closest('a')){closeNav();}});
+    document.addEventListener('click',function(e){if(!e.target.closest('header')){closeNav();}});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeNav();}});
+  }
 
   /* Audit request form -> Klaviyo (client subscribe API) */
   var form=document.getElementById('form');
