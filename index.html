@@ -242,7 +242,23 @@
   button{background:var(--ink);color:#fff;border:0;padding:15px 30px;border-radius:99px;font-weight:700;font-size:16px;cursor:pointer;justify-self:start;transition:background .15s}
   button:hover{background:var(--accent-deep)}
   footer{padding:34px 0 56px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
-  @media(max-width:600px){nav a{margin-left:12px}.hero{padding:60px 0 48px}}
+  @media(max-width:600px){.hero{padding:60px 0 48px}}
+  /* Mobile header: logo on its own row, nav links spread full-width below */
+  @media(max-width:700px){
+    header{padding:12px 0}
+    header .wrap{flex-wrap:wrap;row-gap:10px}
+    nav{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px}
+    nav a{margin-left:0;font-size:14px;white-space:nowrap}
+    nav a.navcta{padding:8px 16px;font-size:13.5px}
+    .theme-toggle{margin-left:0;width:32px;height:32px;flex-shrink:0}
+    section{scroll-margin-top:108px}
+    #form{scroll-margin-top:120px}
+  }
+  @media(max-width:360px){
+    nav a{font-size:13.5px}
+    nav a.navcta{padding:8px 13px;font-size:13px}
+    .theme-toggle{width:30px;height:30px}
+  }
 
   /* 2026 pass: depth, motion, dark mode, accessibility */
   html,body{overflow-x:hidden}
