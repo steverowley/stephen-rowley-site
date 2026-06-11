@@ -9,8 +9,9 @@
 <meta name="author" content="Stephen Rowley">
 <meta name="theme-color" content="#f8f2e7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)">
-<link rel="canonical" href="https://steverowley.github.io/stephen-rowley-site/">
-<meta property="og:url" content="https://steverowley.github.io/stephen-rowley-site/">
+<!-- TODO at deploy: replace YOUR-DOMAIN with the real domain in the 3 tags below -->
+<link rel="canonical" href="https://YOUR-DOMAIN.com/">
+<meta property="og:url" content="https://YOUR-DOMAIN.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Stephen Rowley | Klaviyo Specialist for Ecommerce Brands">
 <meta property="og:description" content="Klaviyo-certified retention marketer. Free full Klaviyo audit: what's leaking, what it's worth, what to fix first, presented on a short 30-minute call.">
@@ -215,6 +216,11 @@
   .contact-card label span{color:#9b9183}
   .contact-card button{background:var(--accent);color:#fff}
   .contact-card button:hover{background:#f08a64}
+  .contact-card button:disabled{opacity:0.6;cursor:wait}
+  .form-success{padding:24px 0;color:#b9ae9f;font-size:16px;line-height:1.65}
+  .form-success strong{display:block;color:#f6f0e6;font-size:20px;margin-bottom:8px}
+  .form-success .tick{color:#e0664a;font-size:26px;display:block;margin-bottom:10px}
+  .form-error{margin-top:10px;color:#f4a07c;font-size:14px;display:none}
   [data-theme="dark"] .contact-card{background:#272019;border-color:#3d342a;box-shadow:0 18px 50px rgba(0,0,0,0.4)}
   [data-theme="dark"] .contact-card::before{background:radial-gradient(circle,rgba(236,122,82,0.24),transparent 65%)}
   @media(max-width:760px){.contact-card{grid-template-columns:1fr;padding:32px 24px;gap:30px}}
@@ -525,18 +531,14 @@
             <li>You keep the prioritized action plan either way</li>
           </ul>
         </div>
-        <!-- TODO: wire to Klaviyo once the account exists.
-             Plan: keep this custom-styled form and submit via Klaviyo's client subscribe API
-             (POST to a.klaviyo.com/client/subscriptions with your PUBLIC site key + list ID,
-             mapping store URL and message to custom profile properties). Then audit leads land
-             in your own Klaviyo with a welcome flow on them: the product demos itself.
-             Until then this action is a placeholder and the form won't submit. -->
-        <form id="form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <!-- Submits to Klaviyo (site UaaaRc, list WNEmWF) via the client subscribe API; handled in JS below -->
+        <form id="form" action="#" method="post">
           <div><label for="name">Name</label><input id="name" type="text" name="name" required></div>
           <div><label for="email">Email</label><input id="email" type="email" name="email" required></div>
           <div><label for="store">Store URL <span>(so I can see what you're selling)</span></label><input id="store" type="url" name="store" placeholder="https://" required></div>
           <div><label for="message">What's your biggest email frustration right now?</label><textarea id="message" name="message" rows="4" placeholder="e.g. We send campaigns but flows are basically empty. Email is maybe 8% of revenue." required></textarea></div>
           <button type="submit">Request my free audit</button>
+          <div class="form-error" id="formError">Something went wrong sending that. Please try again in a moment.</div>
         </form>
       </div>
     </div>
@@ -563,6 +565,56 @@
     theme=(theme==='dark')?'light':'dark';
     apply(theme);
     try{localStorage.setItem('theme',theme);}catch(e){}
+  });}
+
+  /* Audit request form -> Klaviyo (client subscribe API) */
+  var form=document.getElementById('form');
+  if(form){form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var sendBtn=form.querySelector('button[type=submit]');
+    var errBox=document.getElementById('formError');
+    var name=(form.querySelector('#name').value||'').trim();
+    var firstName=name.split(' ')[0]||'';
+    var lastName=name.split(' ').slice(1).join(' ')||'';
+    var payload={
+      data:{
+        type:'subscription',
+        attributes:{
+          profile:{
+            data:{
+              type:'profile',
+              attributes:{
+                email:form.querySelector('#email').value,
+                first_name:firstName,
+                last_name:lastName,
+                properties:{
+                  store_url:form.querySelector('#store').value,
+                  email_frustration:form.querySelector('#message').value,
+                  lead_source:'Website audit form'
+                }
+              }
+            }
+          }
+        },
+        relationships:{list:{data:{type:'list',id:'WNEmWF'}}}
+      }
+    };
+    sendBtn.disabled=true;
+    sendBtn.textContent='Sending...';
+    if(errBox){errBox.style.display='none';}
+    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=UaaaRc',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','revision':'2024-10-15'},
+      body:JSON.stringify(payload)
+    }).then(function(res){
+      if(res.ok){
+        form.innerHTML='<div class="form-success"><span class="tick">✓</span><strong>Audit request received</strong>Thanks '+(firstName||'')+'. Check your inbox: I\'ll reply with simple access instructions, and we\'ll have your findings call within 5 business days of access.</div>';
+      }else{throw new Error('status '+res.status);}
+    }).catch(function(){
+      sendBtn.disabled=false;
+      sendBtn.textContent='Request my free audit';
+      if(errBox){errBox.style.display='block';}
+    });
   });}
 
   /* Scroll progress bar */
