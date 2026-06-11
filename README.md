@@ -20,17 +20,13 @@ open `index.html` directly in a browser to preview it.
 ## Hosting (GitHub Pages)
 
 The site is served by **GitHub Pages** straight from this repository — no build
-pipeline, no separate host, no monthly cost.
+pipeline, no separate host, no monthly cost. Pages is already enabled and the
+site is live at https://steverowley.github.io/stephen-rowley-site/.
 
-To turn it on (a one-time setup, done in the browser):
-
-1. Go to the repo on GitHub → **Settings** → **Pages**.
-2. Under **Build and deployment → Source**, choose **Deploy from a branch**.
-3. Set the branch to **`main`** and the folder to **`/ (root)`**, then **Save**.
-
-Within a minute or two the site goes live at
-`https://steverowley.github.io/stephen-rowley-site/`. After that, every change
-merged into `main` publishes automatically.
+Every change merged into `main` republishes automatically within a minute or
+two. The current setup (repo → **Settings** → **Pages**) is **Deploy from a
+branch**, branch **`main`**, folder **`/ (root)`** — adjust it there if you ever
+move the source.
 
 ## The audit-request form
 
