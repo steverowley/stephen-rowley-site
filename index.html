@@ -136,13 +136,18 @@
   .logos-strip p{text-align:left;font-size:13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);font-weight:600;margin-bottom:26px}
   .logos{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:18px 48px;list-style:none}
   .logos li{font-size:21px;color:#9a948b;letter-spacing:-0.01em;white-space:nowrap}
-  .logos img{width:auto;filter:grayscale(1) opacity(0.7);vertical-align:middle}
+  .logos img{width:auto;max-width:100%;object-fit:contain;filter:grayscale(1) opacity(0.7);vertical-align:middle}
   .logos .logo-hf{height:32px}
   .logos .logo-korg{height:22px}
   .logos .logo-wilk{height:36px}
   .logos .logo-nel{height:24px}
   .logos .fallback{display:none;font-weight:700}
-  @media(max-width:600px){.logos{gap:14px 28px}.logos li{font-size:17px}.logos .logo-hf{height:26px}.logos .logo-korg{height:18px}.logos .logo-wilk{height:29px}.logos .logo-nel{height:19px}}
+  @media(max-width:600px){
+    .logos-strip p{text-align:center;margin-bottom:20px}
+    .logos{display:grid;grid-template-columns:repeat(2,1fr);gap:24px 16px;justify-items:center;align-items:center}
+    .logos li{font-size:17px}
+    .logos .logo-hf{height:27px}.logos .logo-korg{height:19px}.logos .logo-wilk{height:30px}.logos .logo-nel{height:20px}
+  }
   .symptoms{margin-top:32px;display:grid;gap:0;max-width:660px}
   .symptoms li{list-style:none;display:flex;align-items:baseline;gap:14px;padding:16px 4px;border-top:1px solid var(--line);font-size:16.5px;color:var(--muted)}
   .symptoms li>span{flex:1}
