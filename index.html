@@ -326,6 +326,8 @@
   [data-theme="dark"] .cursor-glow{background:radial-gradient(circle,rgba(236,122,82,0.4),transparent 65%)}
   @media(pointer:coarse){.cursor-glow{display:none}}
 </style>
+<!-- Klaviyo onsite tracking (Active on Site + signup forms). Public site ID, safe to expose. -->
+<script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=UaaaRc"></script>
 </head>
 <body>
 
@@ -590,6 +592,7 @@
     var name=(form.querySelector('#name').value||'').trim();
     var firstName=name.split(' ')[0]||'';
     var lastName=name.split(' ').slice(1).join(' ')||'';
+    var email=form.querySelector('#email').value;
     var payload={
       data:{
         type:'subscription',
@@ -598,7 +601,7 @@
             data:{
               type:'profile',
               attributes:{
-                email:form.querySelector('#email').value,
+                email:email,
                 first_name:firstName,
                 last_name:lastName,
                 properties:{
@@ -622,6 +625,8 @@
       body:JSON.stringify(payload)
     }).then(function(res){
       if(res.ok){
+        /* Cookie this browser so Klaviyo onsite tracking ties future visits to this profile */
+        if(window.klaviyo){window.klaviyo.identify({email:email,first_name:firstName,last_name:lastName});}
         var safeName=firstName.replace(/[<>&"]/g,'');
         form.innerHTML='<div class="form-success" role="status">'
           +'<span class="tick-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>'
