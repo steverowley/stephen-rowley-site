@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Stephen Rowley">
-  <rect width="64" height="64" rx="14" fill="#f8f2e7"/>
+  <rect width="64" height="64" rx="14" fill="#1a1611"/>
   <text x="21" y="46" text-anchor="middle"
         font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
         font-size="46" font-weight="800" letter-spacing="-1"
-        fill="#1a1611">S</text>
-  <circle cx="46" cy="43" r="6" fill="#e0664a"/>
+        fill="#f8f2e7">S</text>
+  <circle cx="46" cy="43" r="6" fill="#ec7a52"/>
 </svg>
