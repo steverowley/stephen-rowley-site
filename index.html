@@ -261,7 +261,8 @@
   }
 
   /* 2026 pass: depth, motion, dark mode, accessibility */
-  html,body{overflow-x:hidden}
+  /* clip, not hidden: overflow hidden on an ancestor disables the header's position:sticky */
+  html,body{overflow-x:hidden;overflow-x:clip}
   ::selection{background:var(--accent-soft)}
   .hero{position:relative}
   .hero::before{content:"";position:absolute;top:-100px;right:-140px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(224,102,74,0.12),transparent 65%);pointer-events:none}
