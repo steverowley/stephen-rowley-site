@@ -28,12 +28,17 @@ two. The current setup (repo → **Settings** → **Pages**) is **Deploy from a
 branch**, branch **`main`**, folder **`/ (root)`** — adjust it there if you ever
 move the source.
 
-## The audit-request form
+## The Klaviyo integration
 
-The contact form at the bottom of the page (the "Request my free audit" form) is
-being wired up to **Klaviyo** by the site owner. Until that's connected, form
-submissions won't be delivered anywhere, so finish the Klaviyo integration before
-driving traffic to the page.
+Two pieces, both in `index.html` and both using the public site ID `UaaaRc`
+(safe to expose — it can only subscribe people, never read account data):
+
+- **The audit-request form** (the "Request my free audit" form) submits straight
+  to Klaviyo's client subscribe API and adds the lead to list `WNEmWF`, with
+  their store URL and biggest email frustration saved as profile properties.
+- **Onsite tracking** (`klaviyo.js`, loaded in the `<head>`) records "Active on
+  Site" activity. When someone submits the form, the page identifies their
+  browser to Klaviyo, so their return visits show up on their profile.
 
 ## Making changes
 
