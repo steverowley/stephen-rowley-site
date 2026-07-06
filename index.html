@@ -164,7 +164,7 @@
   }
   .circled{position:relative;display:inline-block;white-space:nowrap}
   .circled svg{position:absolute;left:-9%;top:-16%;width:118%;height:132%;overflow:visible;pointer-events:none}
-  .circled path{stroke:var(--red);stroke-width:2.5;fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:100;stroke-dashoffset:0}
+  .circled path{stroke:var(--red);stroke-width:0.8;fill:none;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0}
   html.anim .draw path{stroke-dashoffset:100}
   html.anim .draw.drawn path{transition:stroke-dashoffset 0.45s ease 0.15s;stroke-dashoffset:0}
   .marginnote{
@@ -215,7 +215,6 @@
   .item{border-top:1px solid var(--rule);padding:22px 4px}
   .item:last-of-type{border-bottom:1px solid var(--rule)}
   .itemline{display:flex;align-items:baseline;gap:2px;font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:0.05em;text-transform:uppercase}
-  .item:hover .itemline{background:var(--hi)}
   .itemline .ino{color:var(--muted);margin-right:1.5ch;font-weight:400}
   .leaders{flex:1 1 auto;min-width:2ch;border-bottom:2px dotted var(--rule);margin:0 1ch;transform:translateY(-0.3em)}
   .ifee{display:flex;flex:1 1 auto;align-items:baseline;min-width:0}
@@ -296,7 +295,7 @@
     font-family:var(--serif);font-size:16.5px;color:var(--ink);line-height:1.55;
     background:transparent;border:1px solid var(--rule);border-bottom:2px solid var(--ink);resize:vertical
   }
-  input::placeholder,textarea::placeholder{color:var(--muted);opacity:0.75}
+  input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .chips:empty{display:none}
   .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule);padding:5px 8px 5px 10px;font-family:var(--mono);font-size:11px;letter-spacing:0.03em;text-transform:uppercase}
@@ -313,8 +312,10 @@
   }
   form button[type=submit]:hover{background:transparent;color:var(--red)}
   form button[type=submit]:disabled{opacity:0.55;cursor:wait}
-  .form-error{color:var(--red);font-size:15px;display:none}
+  .form-error{color:var(--red);font-size:15px}
   .noscript-note{margin-top:16px;font-family:var(--mono);font-size:12px;letter-spacing:0.04em;text-transform:uppercase;color:var(--red)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .form-success:focus{outline:none} /* focused programmatically after submit; not interactive */
 
   /* Success: the stamp lands. The stamp is a circle because rubber stamps are circles —
      the no-rounded-corners rule is about UI chrome, not the prop. */
@@ -323,7 +324,7 @@
   .stamp{
     width:158px;height:158px;border:3px solid var(--red);border-radius:50%;
     display:flex;align-items:center;justify-content:center;position:relative;
-    transform:rotate(-8deg);color:var(--red);text-shadow:0 0 1px currentColor;
+    transform:rotate(-8deg);color:var(--red);
     margin-bottom:26px
   }
   .stamp::after{content:"";position:absolute;inset:6px;border:2px solid var(--red);border-radius:50%}
@@ -577,8 +578,9 @@
         <div><label class="consent" for="consent"><input id="consent" type="checkbox" name="consent" required><span>I consent to my details being stored and used to contact me about my audit request. Unsubscribe anytime.</span></label></div>
         <p class="feeline"><span>Fee for this audit</span><span class="leaders" aria-hidden="true"></span><span class="amt">$0.00</span></p>
         <button type="submit">Request my free audit</button>
-        <div class="form-error" id="formError">Something went wrong sending that. Please try again in a moment.</div>
+        <div class="form-error" id="formError" role="alert"></div>
       </form>
+      <p class="sr-only" id="formStatus" role="status"></p>
       <noscript><p class="noscript-note">This form needs JavaScript to send — nothing else on this page does.</p></noscript>
     </div>
   </section>
@@ -586,11 +588,11 @@
 
 <footer class="colophon">
   <div>&copy; 2026 Stephen Rowley &middot; Klaviyo email marketing and AI automation for ecommerce brands &middot; Remote, worldwide &middot; Not affiliated with or endorsed by Klaviyo, Inc.</div>
-  <span class="m">Specimen document — set in Charter &amp; IBM Plex Mono &middot; one HTML file &middot; no trackers beyond Klaviyo</span>
+  <span class="m">Specimen document — set in Charter &amp; IBM Plex Mono via Google Fonts &middot; one HTML file &middot; no analytics beyond Klaviyo</span>
 </footer>
 
-<div class="runfoot" aria-hidden="true">
-  <span class="rf-id">ROWLEY / KLAVIYO AUDIT — PAGE <span id="pageNow">1</span> OF 7</span>
+<div class="runfoot">
+  <span class="rf-id" aria-hidden="true">ROWLEY / KLAVIYO AUDIT — PAGE <span id="pageNow">1</span> OF 7</span>
   <a href="#contact">&rarr; P.7: GET THE FREE AUDIT</a>
 </div>
 
@@ -654,7 +656,7 @@
     if(!ta)return;
     var v=ta.value;
     if(on){
-      if(v.indexOf(line)===-1){ta.value=v?v.replace(/\s+$/,'')+'\n'+line:line;}
+      if(v.indexOf(line)===-1){var t=v.replace(/\s+$/,'');ta.value=t?t+'\n'+line:line;}
     }else{
       ta.value=v.split('\n').filter(function(l){return l.trim()!==line.trim();}).join('\n');
     }
@@ -678,7 +680,13 @@
         x.type='button';
         x.textContent='×';
         x.setAttribute('aria-label','Remove: '+b.getAttribute('data-chip'));
-        x.addEventListener('click',function(){b.checked=false;setLine(b.getAttribute('data-line'),false);syncFindings();});
+        x.addEventListener('click',function(){
+          var idx=Array.prototype.indexOf.call(chipsEl.children,chip);
+          b.checked=false;setLine(b.getAttribute('data-line'),false);syncFindings();
+          var btns=chipsEl.querySelectorAll('button');
+          if(btns.length){btns[Math.min(idx,btns.length-1)].focus();}
+          else if(ta){ta.focus();}
+        });
         chip.appendChild(x);
         chipsEl.appendChild(chip);
       });
@@ -724,7 +732,7 @@
     };
     sendBtn.disabled=true;
     sendBtn.textContent='Sending...';
-    if(errBox){errBox.style.display='none';}
+    if(errBox){errBox.textContent='';}
     fetch('https://a.klaviyo.com/client/subscriptions/?company_id=UaaaRc',{
       method:'POST',
       headers:{'Content-Type':'application/json','revision':'2024-10-15'},
@@ -748,11 +756,17 @@
           +'</ol>'
           +'<p class="ps">No autoresponders, no drip sequence. The next email in your inbox is me, personally.</p>'
           +'</div>';
+        /* freeze the findings checklist so it can't write into the replaced form */
+        boxes.forEach(function(b){b.disabled=true;});
+        var st=document.getElementById('formStatus');
+        if(st){st.textContent='Request received. Check your inbox.';}
+        var sc=form.querySelector('.form-success');
+        if(sc){sc.setAttribute('tabindex','-1');sc.focus();}
       }else{throw new Error('status '+res.status);}
     }).catch(function(){
       sendBtn.disabled=false;
       sendBtn.textContent='Request my free audit';
-      if(errBox){errBox.style.display='block';}
+      if(errBox){errBox.textContent='Something went wrong sending that. Please try again in a moment.';}
     });
   });}
 })();
